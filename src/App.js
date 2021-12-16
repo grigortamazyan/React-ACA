@@ -1,23 +1,32 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react'
 import './App.css';
 
 function App() {
+  const [data, setData] = useState([]);
+  const [inputInfo, setInputInfo] = useState('')
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos').then((resp) => resp.json()).then((data) => setData(data))
+  }, [])
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const filtered = data.filter((el) => el.title.includes(inputInfo));
+    setData(filtered);
+    setInputInfo('')
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form onSubmit={handleSubmit}>
+        <input placeholder='Search' value={inputInfo} onChange={(e) => setInputInfo(e.target.value)} />
+        <button type='submit'>Find</button>
+      </form>
+      <div>
+        {data.map((item, index) => (
+          <div key={index} className="card">
+            {item.title}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
